@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+</head>
+<body>
+<h1>Вход</h1>
+<form id="loginForm" action="/api/auth/jwt/login/" method="post">
+    <input type="email" name="username" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Пароль" required>
+    <button type="submit">Войти</button>
+</form>
+<a href="/pages/">На главную</a>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Предотвращаем стандартное действие отправки формы
+
+        const formData = new FormData(this); // Получаем данные формы
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/pages/'; // Редирект на главную страницу
+            } else {
+                // Обработка ошибок (можно добавить уведомление об ошибке)
+                alert('Ошибка входа. Пожалуйста, проверьте введенные данные.');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при обработке запроса.');
+        });
+    });
+</script>
+</body>
+</html>

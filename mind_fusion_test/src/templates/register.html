@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+</head>
+<body>
+    <h1>Регистрация</h1>
+    <form id="registrationForm" action="/api/auth/register/" method="post">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Пароль" required>
+        <input type="number" name="tg_id" placeholder="Телеграм ID" required>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <a href="/pages/">На главную</a>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+
+            // Собираем данные формы
+            const formData = new FormData(this);
+            const data = {};
+
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // Отправляем данные в формате JSON
+            fetch('/api/auth/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Переход на главную страницу после успешной регистрации
+                    window.location.href = '/pages/';
+                } else {
+                    // Обработка ошибки
+                    alert('Ошибка регистрации. Попробуйте еще раз.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка при отправке данных. Попробуйте еще раз.');
+            });
+        });
+    </script>
+</body>
+</body>
+</html>

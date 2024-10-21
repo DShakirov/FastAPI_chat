@@ -1,0 +1,30 @@
+services:
+  tests:
+    build:
+      context: .
+    env_file: .env.tests
+    container_name: mind_fusion_tests
+    command: ["/mind_fusion_test/docker/tests.sh"]
+    ports:
+      - 8000:8000
+    volumes:
+      - ./mind_fusion_test:/mind_fusion_test
+    depends_on:
+      - test_db
+
+
+
+  test_db:
+    image: postgres:15
+    container_name: test_db_app
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    command: bash -c "rm -rf /var/lib/postgresql/data/* && docker-entrypoint.sh postgres"
+
+volumes:
+  db_data:

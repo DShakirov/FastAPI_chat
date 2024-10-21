@@ -1,0 +1,52 @@
+services:
+  app:
+    build:
+      context: .
+    env_file: .env.docker
+    container_name: mind_fusion_test
+    command: ["/mind_fusion_test/docker/app.sh"]
+    ports:
+      - 8000:8000
+    volumes:
+      - ./mind_fusion_test:/mind_fusion_test
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    container_name: db_app
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: redis_app
+
+
+  celery:
+    build:
+      context: .
+    env_file:
+      - .env.docker
+    container_name: celery_app
+    command: ["/mind_fusion_test/docker/celery.sh"]
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./src/templates:/src/templates
+    ports:
+      - "80:80"
+
+
+volumes:
+  dbdata:
+  templates:

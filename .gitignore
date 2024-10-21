@@ -1,0 +1,5 @@
+.env.docker
+.env.tests
+.venv/
+__pycache__/
+.idea/
