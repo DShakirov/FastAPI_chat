@@ -43,10 +43,9 @@ app.add_middleware(
                    "Authorization"],
 )
 
-
-@app.on_event('startup')
-async def on_startup() -> None:
-    rc = RedisCacheBackend(f'redis://{settings.REDIS_HOST}')
-    caches.set(CACHE_KEY, rc)
+#@app.on_event('startup')
+#async def on_startup() -> None:
+    #rc = RedisCacheBackend(f'redis://{settings.REDIS_HOST}')
+    #caches.set(CACHE_KEY, rc)
 
 
