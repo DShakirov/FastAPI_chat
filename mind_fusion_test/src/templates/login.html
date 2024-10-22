@@ -22,10 +22,19 @@
 
         fetch(this.action, {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'include' // Убедитесь, что куки отправляются и принимаются
         })
         .then(response => {
             if (response.ok) {
+                // Здесь вы можете установить куки вручную, если это необходимо
+                // Например, если токен возвращается в заголовках ответа:
+                const token = response.headers.get('set-cookie'); // Получаем куки из заголовков
+
+                if (token) {
+                    document.cookie = token; // Устанавливаем куки
+                }
+
                 window.location.href = '/pages/'; // Редирект на главную страницу
             } else {
                 // Обработка ошибок (можно добавить уведомление об ошибке)
