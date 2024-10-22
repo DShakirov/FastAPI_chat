@@ -46,24 +46,7 @@
     try {
     let ws = new WebSocket(`ws://89.169.39.111/chat/ws/${client_id}`);
 
-    ws.onopen = function() {
-        console.log("WebSocket connection established.");
-    };
 
-    ws.onmessage = function(event) {
-        console.log("Message received: " + event.data);
-    };
-
-    ws.onerror = function(error) {
-        console.error("WebSocket error:", error);
-    };
-
-    ws.onclose = function() {
-        console.log("WebSocket connection closed.");
-    };
-    } catch (error) {
-        console.error("Failed to create WebSocket:", error);
-    }
     ws.onmessage = function (event) {
         appendMessage(event.data)
     };
