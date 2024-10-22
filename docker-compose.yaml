@@ -4,7 +4,7 @@ services:
       context: .
     env_file: .env.docker
     container_name: mind_fusion_test
-    command: sh "/mind_fusion_test/docker/app.sh"
+    command: sh -c "alembic upgrade head && cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
     ports:
       - 8000:8000
     volumes:
@@ -34,7 +34,7 @@ services:
     env_file:
       - .env.docker
     container_name: celery_app
-    command: sh "/mind_fusion_test/docker/celery.sh"
+    command: sh -c "cd src && celery --app=tasks:celery worker -l INFO"
     depends_on:
       - redis
 
