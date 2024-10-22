@@ -4,7 +4,7 @@ from starlette.templating import Jinja2Templates
 from users.router import fastapi_users
 from fastapi import Depends
 from users.models import User
-from users.schemas import UserRead
+from logger import logger
 
 
 templates = Jinja2Templates(directory="templates")
@@ -23,6 +23,7 @@ async def read_root(request: Request):
 
 @router.get("/login/", response_class=HTMLResponse)
 async def login(request: Request):
+    logger.info(request)
     return templates.TemplateResponse("login.html", {"request": request})
 
 

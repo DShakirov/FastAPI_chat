@@ -2,12 +2,12 @@ import uuid
 from typing import Optional
 
 from fastapi import Depends, Request, Response
-from fastapi_users import BaseUserManager, UUIDIDMixin, IntegerIDMixin
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_users import BaseUserManager, IntegerIDMixin, models
 from fastapi_users.exceptions import UserAlreadyExists
-from starlette.responses import RedirectResponse
 
 from .models import User, get_user_db
-from .schemas import UserRead, UserCreate
+from .schemas import UserCreate
 from settings import settings
 
 
@@ -17,6 +17,7 @@ SECRET = settings.SECRET_KEY
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
+
 
     async def create(
         self,
@@ -43,6 +44,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         await self.on_after_register(created_user, request)
 
         return created_user
+
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
