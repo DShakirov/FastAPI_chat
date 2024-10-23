@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN: str = os.environ.get("TELEGRAM_BOT_TOKEN")
     SECRET_KEY: str = os.environ.get("SECRET_KEY")
     REDIS_HOST: str = os.environ.get("REDIS_HOST")
+    ALLOWED_HOSTS: str = os.environ.get("ALLOWED_HOSTS")
 
 
 settings = Settings()

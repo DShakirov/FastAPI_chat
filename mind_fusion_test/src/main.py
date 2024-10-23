@@ -36,7 +36,7 @@ app.include_router(chat_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["89.169.39.111"],
+    allow_origins=settings.ALLOWED_HOSTS.split(" "),
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
