@@ -9,3 +9,13 @@ class MessageModel(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PrivateMessageModel(BaseModel):
+    id: int
+    message: str
+    to_user: UserRead
+    from_user: UserRead
+
+    class Config:
+        from_attributes = True

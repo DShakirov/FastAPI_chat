@@ -10,49 +10,89 @@
     <h2>Your email: <span id="ws-id"></span></h2>
     <form action="" onsubmit="sendMessage(event)">
         <input class="bg-green-300" type="text" id="messageText" autocomplete="off"/>
+                <select id="recipientEmail">
+            {% for email in users %}
+                <option value="{{ email }}">{{ email }} </option>
+            {% endfor %}
+        </select>
         <button>Send</button>
     </form>
-    <ul id='messages'>
-</ul>
+    <h3>Публичные сообщения:</h3>
+    <ul id='public-messages'></ul>
+    <h3>Личные сообщения:</h3>
+    <ul id='private-messages'></ul>
 </div>
 <script>
     async function getLastMessages() {
-        const url = 'http://89.169.39.111/chat/last_messages'
-        const response = await fetch(url, {
-            method: 'GET'
-        })
-        return response.json()
+        const url = 'http://89.169.39.111/chat/last_messages';
+        const response = await fetch(url, { method: 'GET' });
+        return response.json();
+    }
+
+    async function getLastPrivateMessages() {
+        const url = 'http://89.169.39.111/chat/last_private_messages';
+        const response = await fetch(url, { method: 'GET' });
+        return response.json();
     }
 
     getLastMessages()
         .then(messages => {
-            appendMessage("Предыдущие 5 сообщений:");
+            appendMessage("Предыдущие 5 сообщений:", 'public-messages');
             messages.forEach(msg => {
-                appendMessage(`${msg.message} от: ${msg.from_user.email}`);
+                appendMessage(`${msg.message} от: ${msg.from_user.email}`, 'public-messages');
             });
-            appendMessage("\nНовые сообщения:");
+            appendMessage("\nНовые сообщения:", 'public-messages');
         });
 
-    function appendMessage(msg) {
-        let messages = document.getElementById('messages')
-        let message = document.createElement('li')
-        let content = document.createTextNode(msg)
-        message.appendChild(content)
-        messages.appendChild(message)
+    getLastPrivateMessages()
+        .then(messages => {
+            appendMessage("Предыдущие личные сообщения:", 'private-messages');
+            messages.forEach(msg => {
+                appendMessage(`Личное сообщение от: ${msg.from_user.email}: ${msg.message}`, 'private-messages');
+            });
+        });
+
+    function appendMessage(msg, type) {
+        let messageList = document.getElementById(type);
+        let message = document.createElement('li');
+        let content = document.createTextNode(msg);
+        message.appendChild(content);
+        messageList.appendChild(message);
     }
 
-    let client_id = "{{ user }}"
+    let client_id = "{{ user }}";
     document.querySelector("#ws-id").textContent = client_id;
     let ws = new WebSocket(`ws://89.169.39.111/chat/ws/${client_id}`);
     ws.onmessage = function (event) {
-        appendMessage(event.data)
+        let data = event.data.split(' '); // Пример, как можно обрабатывать входящее сообщение
+        if (data[0] === '/private') {
+            // Если сообщение приватное, отображаем в 'private-messages'
+            let recipient = data[1]; // email получателя
+            let message = data.slice(2).join(' '); // остальная часть сообщения
+            appendMessage(`Приватное сообщение от: ${recipient}: ${message}`, 'private-messages');
+        } else {
+            // Публичное сообщение
+            appendMessage(event.data, 'public-messages');
+        }
     };
 
     function sendMessage(event) {
-        let input = document.getElementById("messageText")
-        ws.send(input.value)
-        input.value = ''
-        event.preventDefault()
+        let input = document.getElementById("messageText");
+        let recipient = document.getElementById("recipientEmail"); // Поле для ввода email получателя
+        let message = input.value;
+
+        if (recipient.value) {
+            // Отправка приватного сообщения
+            ws.send(`/private ${recipient.value} ${message}`);
+            appendMessage(`Private message to: ${recipient.value}: ${message}`, 'private-messages');
+        } else {
+            // Отправка публичного сообщения
+            ws.send(message);
+        }
+
+        input.value = '';
+        recipient.value = ''; // Очищаем поле получателя
+        event.preventDefault();
     }
 </script>
 </body>

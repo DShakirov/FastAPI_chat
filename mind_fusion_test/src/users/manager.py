@@ -11,6 +11,7 @@ from .schemas import UserCreate
 from settings import settings
 
 
+
 SECRET = settings.SECRET_KEY
 
 
